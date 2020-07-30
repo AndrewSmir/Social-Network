@@ -3,6 +3,10 @@
     background-color: aquamarine;
 }
 
-.item a{
-    color: black;
+.nav > ul{
+    margin-left: 10px;
+}
+
+.item a.activeLink {
+    color: gold;
 }
