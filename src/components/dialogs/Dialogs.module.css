@@ -1,3 +1,23 @@
 .dialogs {
+    display: grid;
+    grid-template-columns: 2fr 10fr;
+}
 
+li > img{
+    width:50px;
+    height:50px;
+    border-radius: 50%;
+}
+
+.dialogItems .active > a{
+    color: green;
+}
+
+.dialog {
+    line-height: 50px;
+}
+
+.dialogTextarea {
+    display: inline-block;
+    border: 1px solid black;
 }

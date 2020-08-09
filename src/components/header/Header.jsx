@@ -4,7 +4,7 @@ import styles from "./Header.module.css"
 function Header() {
     return (
     <header className={styles.header}>
-        <img src="https://png.pngtree.com/element_pic/00/16/07/115783931601b5c.jpg" alt="LOGO"/>
+        <img src={require('./img/logo.png')} alt="LOGO"/>
     </header>)
 }
 

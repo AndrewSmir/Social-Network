@@ -1,8 +1,21 @@
 import React from "react";
 import styles from './Nav.module.css'
 import {NavLink} from "react-router-dom";
+import Friends from "./Friends/Friends";
 
-function Nav(){
+function Nav(props){
+
+    let friendsList = [];
+
+    props.state.forEach(person=> {
+        friendsList.push(<Friends name={person.name} id={person.id} imgSrc={person.imgSrc}/>)
+
+        if (friendsList.length > 3) {
+            friendsList.pop()
+        }
+
+    });
+
     return (<nav className={styles.nav}>
         <ul>
             <li className={styles.item}><NavLink activeClassName={styles.activeLink} to="/profile">Profile</NavLink></li>
@@ -11,6 +24,11 @@ function Nav(){
             <li className={styles.item}><NavLink activeClassName={styles.activeLink} to="/music">Music</NavLink></li>
             <li className={styles.item}><NavLink activeClassName={styles.activeLink} to="/settings">Settings</NavLink></li>
         </ul>
+        <div className={styles.friends}>
+            <p>Friends</p>
+            {friendsList}
+        </div>
+
     </nav>)
 }
 

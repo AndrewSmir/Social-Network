@@ -1,6 +1,7 @@
 .nav {
     grid-area: n;
-    background-color: aquamarine;
+    border: 1px solid black;
+    border-radius: 5px;
 }
 
 .nav > ul{
@@ -9,4 +10,9 @@
 
 .item a.activeLink {
     color: gold;
+}
+
+.friends {
+    text-align: center;
+    margin-top: 15px;
 }
