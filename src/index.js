@@ -3,13 +3,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import store from "./redux/store";
+import store from "./redux/redux-store";
+
 
 const reRenderDOM = (state) => {
-
     ReactDOM.render(
         <React.StrictMode>
-            <App state={state} dispatch={store.dispatch.bind(store)}/>
+            <App state={state} store={store}/>
         </React.StrictMode>,
         document.getElementById('root')
     );
@@ -17,7 +17,9 @@ const reRenderDOM = (state) => {
 
 reRenderDOM(store.getState())
 
-store.subscribe(reRenderDOM)
+store.subscribe(() => {
+    reRenderDOM(store.getState())
+})
 
 
 // If you want your app to work offline and load faster, you can change

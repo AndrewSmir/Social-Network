@@ -5,17 +5,6 @@ import Friends from "./Friends/Friends";
 
 function Nav(props){
 
-    let friendsList = [];
-
-    props.state.forEach(person=> {
-        friendsList.push(<Friends name={person.name} id={person.id} imgSrc={person.imgSrc}/>)
-
-        if (friendsList.length > 3) {
-            friendsList.pop()
-        }
-
-    });
-
     return (<nav className={styles.nav}>
         <ul>
             <li className={styles.item}><NavLink activeClassName={styles.activeLink} to="/profile">Profile</NavLink></li>
@@ -26,7 +15,7 @@ function Nav(props){
         </ul>
         <div className={styles.friends}>
             <p>Friends</p>
-            {friendsList}
+
         </div>
 
     </nav>)
