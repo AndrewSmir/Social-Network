@@ -2,19 +2,15 @@ import React from "react";
 import styles from "./Dialogs.module.css"
 import DialogItem from "./dialogItem/DialogItem";
 import Message from "./message/Message";
+import NewMessage from "./NewMessage";
 
 const Dialogs = (props) => {
 
     const dialogPerson = props.dialogsPage.dialogsData.map(person=> <DialogItem name={person.name} id={person.id} imgSrc={person.imgSrc}/>);
     const messageFromPerson = props.dialogsPage.messagesData.map(message => <Message message={message.message}/>);
 
-    const onTextChange = (event) => {
-        let text = event.target.value;
-        props.onTextChange(text)
-    };
-
-    const addMessage = () => {
-        props.addMessage()
+    const addMessage = (formData) => {
+        props.addMessage(formData.newMessageText)
     }
 
     return (
@@ -26,9 +22,7 @@ const Dialogs = (props) => {
             </div>
             <div className={styles.messages}>
                 {messageFromPerson}
-                <textarea className={styles.dialogTextarea} cols="100" rows="5" onChange={onTextChange} value={props.dialogsPage.newMessageText} placeholder='Введите сообщение'></textarea>
-                <br/>
-                <button onClick={addMessage}>Send Message</button>
+                <NewMessage onSubmit={addMessage}/>
             </div>
         </div>
     )

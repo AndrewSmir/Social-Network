@@ -7,3 +7,14 @@
 .selectedPage {
     font-weight: bold;
 }
+
+.pages {
+    display: flex;
+    justify-content: space-between;
+}
+
+.pages span{
+    margin: 2px;
+    border-bottom: 1px solid black;
+    cursor: pointer;
+}

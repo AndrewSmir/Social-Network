@@ -1,5 +1,4 @@
 const ADD_MESSAGE = 'ADD-MESSAGE';
-const CHANGE_NEW_MESSAGE_TEXT = 'CHANGE-NEW-MESSAGE-TEXT';
 
 const initialState = { // добавляем значение state по умолчанию, оно нужно для инициализации state при запуске приложения. Иначе state будет undefined и наш store не создастся. Детали есть в redux-store
     dialogsData: [
@@ -23,29 +22,21 @@ const initialState = { // добавляем значение state по умо�
         {id: "1", message: 'I\'m fine'},
         {id: "1", message: 'Витек'}
     ],
-
-    newMessageText: ''
 }
 
 //Reducer - чистая функция, которая принимает state, action и возвращает новое состояние state. Если action.type не удовлетворяет условию, то возвращает переданный state
 
 const dialogsReducer = (state = initialState, action) => { //action - объект, у которого как минимум есть type
     switch (action.type) {
-        case CHANGE_NEW_MESSAGE_TEXT: {
-            const stateCopy = {...state} //Зачем делать копию state? Смотри ниже. Новый синтаксис также доступен в profile-reducer-e
-            stateCopy.newMessageText = action.messageText;
-            return stateCopy;
-        }
 
         case ADD_MESSAGE: {
             const stateCopy = {...state}
 
             const newMessage = {
-                id: "33", message: state.newMessageText
+                id: "33", message: action.newMessageText
             };
             stateCopy.messagesData = [...state.messagesData] //Массив - это тот же объект и он также хранится по ссылке, поэтому мы точно так же должны создать копию этого объекта, чтобы connect мог следить за изменением объекта и сравнивать его новое и старое состояние
             stateCopy.messagesData.push(newMessage);
-            stateCopy.newMessageText = '';
             return stateCopy;
         }
 
@@ -55,9 +46,7 @@ const dialogsReducer = (state = initialState, action) => { //action - объек
 }
 
 export default dialogsReducer
-export const changeNewMessageTextActionCreator = (text) => //actionCreator - функция, которая возвращает нам action
-    ({type: CHANGE_NEW_MESSAGE_TEXT, messageText: text});
-export const addMessageActionCreator = () => ({type: ADD_MESSAGE})
+export const addMessageActionCreator = (newMessageText) => ({type: ADD_MESSAGE, newMessageText})
 
 /*
 Зачем мы делаем копию state?

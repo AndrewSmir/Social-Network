@@ -2,28 +2,25 @@ import React from "react";
 import {addMessageActionCreator, changeNewMessageTextActionCreator} from "../../redux/dialogs-reducer";
 import Dialogs from "./Dialogs";
 import {connect} from "react-redux";
+import {withAuthRedirect} from "../../hoc/withAuthRedirect";
+import {compose} from "redux";
 
 const mapStateToProps = (state) => { // connect (функция в самом низу) позволяет нам автоматически вытаскивать state из store. Т.е. он неявно вызывает store.getState() и возвращает нам актуальный state
     return {
-        dialogsPage: state.dialogsPage //Сюда мы передаем то, что будет указано у нас в качестве пропсов, которые мы передаем в презентационную компоненту. Т.е. в итоге мы полчим презентационную компоненту с пропсами <Dialogs dialogsPage={state.dialogsPage} />
+        dialogsPage: state.dialogsPage, //Сюда мы передаем то, что будет указано у нас в качестве пропсов, которые мы передаем в презентационную компоненту. Т.е. в итоге мы полчим презентационную компоненту с пропсами <Dialogs dialogsPage={state.dialogsPage} />
     }
 };
 
 const mapDispatchToProps = (dispatch) => { //сюда connect вытащит из нашего store dispatch - т.е. то, где мы обрабатываем наши reducer-ы
     return {
-        addMessage: () => { //Сюда мы передаем функцию, которая будет передана в качестве props в презентационную компоненту. Т.е. в итоге мы получим <Dialogs addMessage={тело нашей функции (которое передаем в качестве значения свойства addMessage} />
-            const action = addMessageActionCreator() //формируем объект Action, чтобы мы могли понять, какую часть store будем менять
+        addMessage: (newMessage) => { //Сюда мы передаем функцию, которая будет передана в качестве props в презентационную компоненту. Т.е. в итоге мы получим <Dialogs addMessage={тело нашей функции (которое передаем в качестве значения свойства addMessage} />
+            const action = addMessageActionCreator(newMessage) //формируем объект Action, чтобы мы могли понять, какую часть store будем менять
             dispatch(action) //dispatch передает action всем нашим reducer-am попорядку, если action удовлетворит условию, то profile-reducer вернет нам новый state
         },
-
-        onTextChange: (text) => {
-            const action = changeNewMessageTextActionCreator(text)
-            dispatch(action);
-        }
     }
 }
 
-const DialogsContainer = connect(mapStateToProps, mapDispatchToProps)(Dialogs)
+export default compose(connect(mapStateToProps, mapDispatchToProps), withAuthRedirect)(Dialogs)
 
 //С помощью функции connect мы можем создать контейнерную компоненту.
 //Функция connect принимает в себя 2 параметра, которые представляют собой функции
@@ -38,5 +35,3 @@ const DialogsContainer = connect(mapStateToProps, mapDispatchToProps)(Dialogs)
 новый объект сравнивается со старым объектом (его внутренние составляющие, т.к. объект не может быть равен другому объекту).
 Если ичего не меняется, то и компонента не перерисовывается
  */
-
-export default DialogsContainer

@@ -6,3 +6,17 @@
 .header > img {
     margin-top: 15px;
 }
+
+.loginBlock {
+    float: right;
+    color: #f1f0f0;
+}
+
+.loginBlock a {
+    color: #f1f0f0;
+}
+
+.logout {
+    border-bottom: 1px solid white;
+    float: right;
+}

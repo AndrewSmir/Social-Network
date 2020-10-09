@@ -1,92 +1,142 @@
 import React from "react";
 import {
-    changeFollowAC,
-    setCurrentPageAC,
-    setTotalUsersCountAC,
-    setUsersAc,
-    toggleIsFetchingAC
+    followUserTC, getUsersTC,
+    setCurrentPage, setNextPage, setPreviousPage, unfollowUserTC
 } from "../../redux/users-reducer";
 import {connect} from "react-redux";
-import * as axios from "axios";
 import Users from "./Users";
 import Preloader from "../common/Preloader/Preloader";
+import {compose} from "redux";
+import {
+    getCurrentPage,
+    getFollowingInProgress,
+    getIsFetching,
+    getPageSize,
+    getTotalUsersCount,
+    getUsers, getUserSupSel
+} from "../../redux/user-selectors";
+
 
 class UsersContainer extends React.Component {
-    constructor(props) {
-        super(props);
+    componentDidMount() {
+        this.props.getUsers(this.props.currentPage, this.props.pageSize)
     }
 
+    /* - было до Thunk
     componentDidMount() {
         this.props.toggleIsFetching()
-        axios.get(`https://social-network.samuraijs.com/api/1.0/users?page=${this.props.currentPage}&count=${this.props.pageSize}`)
+        userAPI.getUsers(this.props.currentPage, this.props.pageSize)
             .then(response => {
                 this.props.toggleIsFetching()
-                this.props.setUsers(response.data.items);
-                this.props.setTotalUsersCount(response.data.totalCount)
+                this.props.setUsers(response.items);
+                this.props.setTotalUsersCount(response.totalCount)
             })
     }
+     */
 
-    setPage = (evt) => {
-        this.props.toggleIsFetching()
-        this.props.setCurrentPage(evt)
-        axios.get(`https://social-network.samuraijs.com/api/1.0/users?page=${evt}&count=${this.props.pageSize}`)
-            .then(response => {
-                this.props.toggleIsFetching()
-                this.props.setUsers(response.data.items)
-            })
+    setPage = (pageNumber) => {
+        this.props.setCurrentPage(pageNumber)
+        this.props.getUsers(pageNumber, this.props.pageSize)
+    }
+
+    setNextPage = () => {
+        this.props.setNextPage()
+        this.props.getUsers(this.props.currentPage + 1, this.props.pageSize)
+    }
+
+    setPreviousPage = () => {
+        this.props.setPreviousPage()
+        this.props.getUsers(this.props.currentPage - 1, this.props.pageSize)
     }
 
     render() {
         return <>
-            {this.props.isFetching === true ? <Preloader/> : null}
-            <Users totalUsersCount={this.props.totalUsersCount}
-                   pageSize={this.props.pageSize}
-                   setPage={this.setPage}
-                   changeFollow={this.props.changeFollow}
-                   usersPage={this.props.usersPage}
-                   currentPage={this.props.currentPage}
-            />
+            {this.props.isFetching ? <Preloader/> :
+                <Users totalUsersCount={this.props.totalUsersCount}
+                       pageSize={this.props.pageSize}
+                       setPage={this.setPage}
+                       usersPage={this.props.usersPage}
+                       currentPage={this.props.currentPage}
+                       setNextPage={this.setNextPage}
+                       setPreviousPage={this.setPreviousPage}
+                       followingInProgress={this.props.followingInProgress}
+                       followUser={this.props.followUser}
+                       unfollowUser={this.props.unfollowUser}
+                />}
         </>
     }
 }
 
+/*
 const mapStateToProps = (state) => { // connect (функция в самом низу) позволяет нам автоматически вытаскивать state из store. Т.е. он неявно вызывает store.getState() и возвращает нам актуальный state
     return {
         usersPage: state.usersPage.users, //Сюда мы передаем то, что будет указано у нас в качестве пропсов, которые мы передаем в презентационную компоненту. Т.е. в итоге мы полчим презентационную компоненту с пропсами <Dialogs dialogsPage={state.dialogsPage} />
         pageSize: state.usersPage.pageSize,
         totalUsersCount: state.usersPage.totalUsersCount,
         currentPage: state.usersPage.currentPage,
-        isFetching: state.usersPage.isFetching
+        isFetching: state.usersPage.isFetching,
+        followingInProgress: state.usersPage.followingInProgress
+    }
+};
+ */
+
+const mapStateToProps = (state) => {
+    return {
+        usersPage: getUsers(state),
+        pageSize: getPageSize(state),
+        totalUsersCount: getTotalUsersCount(state),
+        currentPage: getCurrentPage(state),
+        isFetching: getIsFetching(state),
+        followingInProgress: getFollowingInProgress(state)
     }
 };
 
-const mapDispatchToProps = (dispatch) => { //сюда connect вытащит из нашего store dispatch - т.е. то, где мы обрабатываем наши reducer-ы
+const mapDispatchToProps = dispatch => {
     return {
-        changeFollow: (userID) => { //Сюда мы передаем функцию, которая будет передана в качестве props в презентационную компоненту. Т.е. в итоге мы получим <Dialogs addMessage={тело нашей функции (которое передаем в качестве значения свойства addMessage} />
-            const action = changeFollowAC(userID) //формируем объект Action, чтобы мы могли понять, какую часть store будем менять
-            dispatch(action) //dispatch передает action всем нашим reducer-am попорядку, если action удовлетворит условию, то profile-reducer вернет нам новый state
+
+        setCurrentPage: (currentPage) => {
+            dispatch(setCurrentPage(currentPage))
         },
-        setUsers: (users) => {
-            const action = setUsersAc(users)
-            dispatch(action)
+        setNextPage: () => {
+            dispatch(setNextPage())
         },
-        setCurrentPage: (pageNumber) => {
-            const action = setCurrentPageAC(pageNumber)
-            dispatch(action)
+        setPreviousPage: () => {
+            dispatch(setPreviousPage())
         },
-        setTotalUsersCount: (totalCount) => {
-            const action = setTotalUsersCountAC(totalCount)
-            dispatch(action)
+
+        getUsers: (currentPage, pageSize) => {
+            dispatch(getUsersTC(currentPage, pageSize))
         },
-        toggleIsFetching: () => {
-            const action = toggleIsFetchingAC();
-            dispatch(action);
+
+        followUser: (userId) => {
+            dispatch(followUserTC(userId))
+        },
+
+        unfollowUser: (userId) => {
+            dispatch(unfollowUserTC(userId))
         }
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UsersContainer)
+export default compose(
+    connect(mapStateToProps, mapDispatchToProps),
+    )(UsersContainer)
 
+/*
+//mapDispatchToProps мы можем заменить объектом и connect сам создаст функции обертки, куда будут заложены наши action-creator-ы
+
+export default connect(mapStateToProps, {
+    changeFollow,
+    setUsers,
+    setCurrentPage,
+    setNextPage,
+    setPreviousPage,
+    setTotalUsersCount,
+    toggleIsFetching,
+    toggleFollowingProgress
+})(UsersContainer)
+
+ */
 //С помощью функции connect мы можем создать контейнерную компоненту.
 //Функция connect принимает в себя 2 параметра, которые представляют собой функции
 //Первая функция принимает в качестве параметров state (Обычно эту функцию называют mapStateToProps)

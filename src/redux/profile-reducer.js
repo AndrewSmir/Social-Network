@@ -1,20 +1,25 @@
-const ADD_POST = 'ADD-POST';
-const CHANGE_NEW_POST_TEXT = 'CHANGE-NEW-POST-TEXT';
+import {profileAPI} from "../api/api";
+
+const ADD_POST = '@@auth-reducer/ADD-POST';
+const SET_USER_PROFILE = '@@auth-reducer/SET_USER_PROFILE';
+const SET_USER_PROFILE_STATUS = '@@auth-reducer/SET_USER_PROFILE_STATUS'
+const DELETE_POST = '@@auth-reducer/DELETE_POST'
 
 const initialState = {
     postData: [
         {id: 1, message: 'Hi, how are you?', likes: 300},
         {id: 2, message: "It's my first post", likes: 20}
     ],
-        newPostText: ''
+    profile: null,
+    profileStatus: null
 } // добавляем значение state по умолчанию, оно нужно для инициализации state при запуске приложения. Иначе state будет undefined и наш store не создастся
 
 const profileReducer = (state = initialState, action) => {
 
-    switch(action.type) {
+    switch (action.type) {
         case ADD_POST: {
             const newPost = {
-                id: 2, message: state.newPostText, likes: 0
+                id: 3, message: action.newPostText, likes: 0
             };
 
             return {
@@ -24,14 +29,25 @@ const profileReducer = (state = initialState, action) => {
                 //Для того, чтобы мы могли отследить изменения объекта, делаем копию массива PostData и в новый массив мы добавляем newPostText (то же, что и arr.push(newPostText))
                 //Теперь у нас есть копия массива PostData, однако элементы этого массива также представляют собой объекты.
                 //Копировать конкретно эти объекты нам не требуется, т.к. мы не предполагаем их изменения. Но, если, например, у нас добавится функционал по редактированию постов, то мы должны будем сделать копию и этих постов.
-                newPostText: ''
             }
         }
 
-        case CHANGE_NEW_POST_TEXT: {
+        case SET_USER_PROFILE: {
             return {
-                ...state, //Сделали поверхностуню копию state.
-                newPostText: action.postText //Т.к. это примитив, то для изменения достаточно только поверхностной копии.
+                ...state, profile: action.profile
+            }
+        }
+
+        case SET_USER_PROFILE_STATUS: {
+            return {
+                ...state, profileStatus: action.status
+            }
+        }
+
+        case DELETE_POST: {
+
+            return {
+                ...state, postData: state.postData.filter(post => post.id !== action.postId)
             }
         }
 
@@ -42,6 +58,28 @@ const profileReducer = (state = initialState, action) => {
 
 export default profileReducer
 
-export const addPostActionCreator = () => ({type: ADD_POST});
-export const changeNewPostTextActionCreator = (text) =>
-    ({type: CHANGE_NEW_POST_TEXT, postText: text});
+
+///Action Creators///
+export const addPostActionCreator = (newPostText) => ({type: ADD_POST, newPostText});
+export const setUserProfile = (profile) => ({type: SET_USER_PROFILE, profile})
+export const setUserProfileStatus = (status) => ({type: SET_USER_PROFILE_STATUS, status})
+export const deletePost = (postId) => ({type: DELETE_POST, postId})
+
+///Thunks///
+
+export const setProfileTC = (userId) => async dispatch => {
+    let data = await profileAPI.setProfile(userId)
+    dispatch(setUserProfile(data))
+}
+
+export const getProfileStatusTC = (userId) => async dispatch => {
+    const status = await profileAPI.getStatus(userId)
+    dispatch(setUserProfileStatus(status))
+}
+
+export const updateProfileStatusTC = (status) => async dispatch => {
+    const data = await profileAPI.updateStatus(status)
+    if (data.resultCode === 0) {
+        dispatch(setUserProfileStatus(status))
+    }
+}

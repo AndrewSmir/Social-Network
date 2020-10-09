@@ -1,17 +1,28 @@
-import {combineReducers, createStore} from "redux";
+import {applyMiddleware, combineReducers, compose, createStore} from "redux";
 import dialogsReducer from "./dialogs-reducer";
 import profileReducer from "./profile-reducer";
 import sidebarReducer from "./sidebar-reducer";
 import usersReducer from "./users-reducer";
+import authReducer from "./auth-reducer";
+import thunk from "redux-thunk";
+import { reducer as formReducer } from 'redux-form'
+import {appReducer} from "./app-reducer";
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
 const reducersButch = combineReducers({ //Склеиваем наши reducers в одну кучу
     dialogsPage: dialogsReducer,  //Название свойства - это компонента в _state. Значение - reducer, который отвечает за обработку этой страницы.
     profilePage: profileReducer,
     sideBar: sidebarReducer,
-    usersPage: usersReducer
+    usersPage: usersReducer,
+    authReducer, //можно сразу же использовать название reducer-a
+    form: formReducer, //Для reducer-a redux-form свойство должно быть указано как form, т.к. в дальнейшем эта библиотека будет искать именно его
+    appReducer
 })
 
-let store = createStore(reducersButch)
+let store = createStore(reducersButch,  composeEnhancers(applyMiddleware(thunk)))
+
+Window.prototype.store = store
 
 //Создаем Store. getState, dispatch, callSubscriber - все это уже будет сидеть внутри store и будет его внутренними методами.
 //Автоматически создается state, который будет включать в себя свойства, которые мы передаем в reducersButch.
