@@ -1,43 +1,43 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "3681cce8a94c2515f94acf7529765eb5",
+    "revision": "96d46afab758498b82911b7d0b4e28f9",
     "url": "/Social-Network/index.html"
   },
   {
-    "revision": "40ac2c357129c03b8899",
+    "revision": "7eaef5b9f94b8e8cd22a",
     "url": "/Social-Network/static/css/3.b8cc8ee2.chunk.css"
   },
   {
-    "revision": "caf871a2d06959eb49c8",
+    "revision": "58c0c9965791018c8336",
     "url": "/Social-Network/static/css/4.e7501a48.chunk.css"
   },
   {
-    "revision": "8660ab47bfdff4c2fe9f",
+    "revision": "d496dca47099b2650635",
     "url": "/Social-Network/static/css/main.43eb5d1e.chunk.css"
   },
   {
-    "revision": "b49040bd6e7bf3450d90",
-    "url": "/Social-Network/static/js/2.d54e4ccc.chunk.js"
+    "revision": "0926f75423305f4e4606",
+    "url": "/Social-Network/static/js/2.6a5e6ca0.chunk.js"
   },
   {
     "revision": "c64c486544348f10a6d6c716950bc223",
-    "url": "/Social-Network/static/js/2.d54e4ccc.chunk.js.LICENSE.txt"
+    "url": "/Social-Network/static/js/2.6a5e6ca0.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "40ac2c357129c03b8899",
-    "url": "/Social-Network/static/js/3.ac46e2eb.chunk.js"
+    "revision": "7eaef5b9f94b8e8cd22a",
+    "url": "/Social-Network/static/js/3.708fb609.chunk.js"
   },
   {
-    "revision": "caf871a2d06959eb49c8",
-    "url": "/Social-Network/static/js/4.cf8a390a.chunk.js"
+    "revision": "58c0c9965791018c8336",
+    "url": "/Social-Network/static/js/4.479215b5.chunk.js"
   },
   {
-    "revision": "8660ab47bfdff4c2fe9f",
-    "url": "/Social-Network/static/js/main.b93127c8.chunk.js"
+    "revision": "d496dca47099b2650635",
+    "url": "/Social-Network/static/js/main.c835c848.chunk.js"
   },
   {
-    "revision": "baeab0d679a979b762f5",
-    "url": "/Social-Network/static/js/runtime-main.55e4b5ea.js"
+    "revision": "3ac4a77f199047df2305",
+    "url": "/Social-Network/static/js/runtime-main.dd59a44b.js"
   },
   {
     "revision": "9064981b80e59f1b663c17fab41563c9",
