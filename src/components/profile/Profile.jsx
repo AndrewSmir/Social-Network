@@ -8,7 +8,7 @@ function Profile(props) {
 
     return (
         <div>
-            <ProfileInfo profile={props.profile} profileStatus={props.profileStatus} updateUserStatus={props.updateUserStatus}/>
+            <ProfileInfo profile={props.profile} profileStatus={props.profileStatus} updateUserStatus={props.updateUserStatus} isOwner={props.isOwner} savePhoto={props.savePhoto} saveProfile={props.saveProfile}/>
             <MyPosts />
         </div>
     )

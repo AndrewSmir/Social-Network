@@ -3,7 +3,7 @@ import './App.css'
 import Nav from "./components/nav/Nav";
 import Settings from "./components/settings/Settings";
 import News from "./components/news/News";
-import {BrowserRouter, Route} from "react-router-dom";
+import {BrowserRouter, HashRouter, Route} from "react-router-dom"; //Используем browserRouter
 import UsersContainer from "./components/Users/UsersContainer";
 import HeaderContainer from "./components/header/HeaderContainer";
 import LoginPage from "./components/Login/Login";
@@ -73,9 +73,9 @@ let ComposedApp = compose(
 
 export const MainApp = (props) => {
     return (
-        <BrowserRouter>
+        <HashRouter>
             <Provider store={store}>
                 <ComposedApp/>
             </Provider>
-        </BrowserRouter>)
+        </HashRouter>)
 }

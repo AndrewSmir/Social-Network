@@ -4,7 +4,7 @@ import {compose} from "redux";
 import {maxLength, requiredField} from "../../../utils/validators/validators";
 import {Textarea} from "../../common/FormsControl/FormsControls";
 
-const maxLength10 = maxLength(10)
+const maxLength10 = maxLength(1000)
 
 const AddPost = (props) => {
     return (

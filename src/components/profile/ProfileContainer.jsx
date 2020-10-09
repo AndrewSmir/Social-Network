@@ -1,14 +1,20 @@
 import React, {Component} from "react";
 import Profile from "./Profile";
 import {connect} from "react-redux";
-import {getProfileStatusTC, setProfileTC, updateProfileStatusTC} from "../../redux/profile-reducer";
+import {
+    getProfileStatusTC,
+    savePhotoTC,
+    saveProfileTC,
+    setProfileTC,
+    updateProfileStatusTC
+} from "../../redux/profile-reducer";
 import {withRouter} from "react-router-dom";
 import {withAuthRedirect} from "../../hoc/withAuthRedirect";
 import {compose} from "redux";
 
 class ProfileContainer extends Component { //Задача контейнерной компоненты - быть оберткой для презентационной компоненты.
 
-    componentDidMount() { //Делаем ajax запросы в методе componentDidMount, т.к. получаение данных - асинхронный процесс. Если будем делать запрос на сервер до того, как наша компонента будет вмонтирована, то есть риск, что мы не сможем ничего отрисовать, например, из-зи проблем с сетью
+    refreshProfile(){
         let userId = this.props.match.params.userId; //props.match.params.userId - эти пропсы нам добавляет HOC withRouter
 
         if (!userId){
@@ -19,11 +25,21 @@ class ProfileContainer extends Component { //Задача контейнерно
         this.props.getUserStatus(userId)
     }
 
+    componentDidMount() { //Делаем ajax запросы в методе componentDidMount, т.к. получаение данных - асинхронный процесс. Если будем делать запрос на сервер до того, как наша компонента будет вмонтирована, то есть риск, что мы не сможем ничего отрисовать, например, из-зи проблем с сетью
+        this.refreshProfile()
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.match.params.userId != prevProps.match.params.userId) {
+            this.refreshProfile()
+        }
+    }
+
     render() {
 
         return(
             <div>
-                <Profile {...this.props} profile={this.props.profile}/>
+                <Profile {...this.props} profile={this.props.profile} isOwner={!this.props.match.params.userId} savePhoto={this.props.savePhoto} saveProfile={this.props.saveProfile}/>
             </div>
         )
     }
@@ -48,6 +64,12 @@ const mapDispatchToProps = (dispatch) => {
         },
         updateUserStatus: status => {
             dispatch(updateProfileStatusTC(status))
+        },
+        savePhoto: (file) => {
+            dispatch(savePhotoTC(file))
+        },
+        saveProfile: (profileData) => {
+            dispatch(saveProfileTC(profileData))
         }
     }
 }

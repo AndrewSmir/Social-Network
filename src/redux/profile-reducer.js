@@ -1,9 +1,11 @@
 import {profileAPI} from "../api/api";
+import {stopSubmit} from "redux-form";
 
 const ADD_POST = '@@auth-reducer/ADD-POST';
 const SET_USER_PROFILE = '@@auth-reducer/SET_USER_PROFILE';
 const SET_USER_PROFILE_STATUS = '@@auth-reducer/SET_USER_PROFILE_STATUS'
 const DELETE_POST = '@@auth-reducer/DELETE_POST'
+const SAVE_PHOTOS_SUCCESS = '@@auth-reducer/SAVE_PHOTOS_SUCCESS'
 
 const initialState = {
     postData: [
@@ -45,10 +47,13 @@ const profileReducer = (state = initialState, action) => {
         }
 
         case DELETE_POST: {
-
             return {
                 ...state, postData: state.postData.filter(post => post.id !== action.postId)
             }
+        }
+
+        case SAVE_PHOTOS_SUCCESS: {
+            return {...state, profile: {...state.profile, photos: action.photos}}
         }
 
         default:
@@ -64,6 +69,7 @@ export const addPostActionCreator = (newPostText) => ({type: ADD_POST, newPostTe
 export const setUserProfile = (profile) => ({type: SET_USER_PROFILE, profile})
 export const setUserProfileStatus = (status) => ({type: SET_USER_PROFILE_STATUS, status})
 export const deletePost = (postId) => ({type: DELETE_POST, postId})
+export const savePhotoSuccess = (photos) => ({type: SAVE_PHOTOS_SUCCESS, photos})
 
 ///Thunks///
 
@@ -82,4 +88,23 @@ export const updateProfileStatusTC = (status) => async dispatch => {
     if (data.resultCode === 0) {
         dispatch(setUserProfileStatus(status))
     }
+}
+
+export const savePhotoTC = (file) => async dispatch => {
+    let response = await profileAPI.savePhoto(file)
+
+    if (response.data.resultCode === 0) {
+        dispatch(savePhotoSuccess(response.data.data.photos))
+    }
+}
+
+export const saveProfileTC = (profileData) => async (dispatch, getState) => {
+    const userId = getState().authReducer.id
+    let response = await profileAPI.saveProfile(profileData)
+    if (response.data.resultCode === 0) {
+        dispatch(setProfileTC(userId))
+    } else {
+        dispatch(stopSubmit('edit-profile', {_error: response.data.messages[0]}))
+    }
+
 }
