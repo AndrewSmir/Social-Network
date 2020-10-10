@@ -6,6 +6,7 @@ import {Redirect} from "react-router-dom";
 
 const Login = (props) => {
     const onSubmit = (formData) => {
+        console.log(formData);
         props.signIn(formData)
     }
 
@@ -16,14 +17,15 @@ const Login = (props) => {
     return (
         <div>
             <h1>Login</h1>
-            <LoginForm onSubmit={onSubmit}/>
+            <LoginForm onSubmit={onSubmit} captcha={props.captcha}/>
         </div>
     )
 }
 
 const mapStateToProps = state => {
     return {
-        isAuth: state.authReducer.isAuth
+        isAuth: state.authReducer.isAuth,
+        captcha: state.authReducer.captchaURL
     }
 }
 

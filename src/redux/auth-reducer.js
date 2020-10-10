@@ -1,15 +1,16 @@
 import {loginAPI} from "../api/api";
 import {stopSubmit} from "redux-form";
 
-const SET_USER_DATA = 'SET_USER_DATA';
-const CLEAR_USER_DATA = 'CLEAR_USER_DATA'
+const SET_USER_DATA = '@@auth-reducer/SET_USER_DATA';
+const SET_CAPTCHA_URL = '@@auth-reducer/SET_CAPTCHA_URL'
 
 const initialState = {
     id: null,
     email: null,
     login: null,
     isFetching: false,
-    isAuth: false
+    isAuth: false,
+    captchaURL: null // if null, then captcha is not required
 }
 
 const authReducer = (state = initialState, action) => {
@@ -21,6 +22,12 @@ const authReducer = (state = initialState, action) => {
                 ...action.payload,
             }
 
+        case SET_CAPTCHA_URL:
+            return {
+                ...state,
+                captchaURL: action.url
+            }
+
         default:
             return state
 
@@ -30,11 +37,12 @@ const authReducer = (state = initialState, action) => {
 export default authReducer
 
 ///Action Creators///
-export const setUserData = (id, email, login, isAuth) => ({type: SET_USER_DATA, payload: {id, email, login, isAuth}})
+export const setUserData = (id, email, login, isAuth, captchaURL) => ({type: SET_USER_DATA, payload: {id, email, login, isAuth, captchaURL}})
+const setCaptchaUrl = (url) => ({type: SET_CAPTCHA_URL, url})
 
 ///Thunks///
 
-export const getAuthUserDataTC = () => async (dispatch) => {
+export const getAuthUserDataTC = () => async (dispatch) => { //Задача Thunk - выполнить асинхранную операцию и результат этой операции передать в state через dispatch action-a
     const data = await loginAPI.login()
 
     if (data.resultCode === 0) {
@@ -49,7 +57,10 @@ export const signInTC = (loginData) => dispatch => {
             if (data.resultCode === 0) {
                 dispatch(getAuthUserDataTC())
             } else {
-                const message = data.messages.length > 0 ? data.messages[0] : 'Some Error'
+                if (data.resultCode === 10) {
+                    dispatch(getCaptchaURLTC())
+                }
+                const message = data.messages[0]
                 let action = stopSubmit('login', {_error: message}) //actionCreator reduxform В stopSubmit мы передаем 2 параметра: 1 - название формы в нашем state-e (это название мы передаем в HOC reduxForm, когда оборачиваем нашу компоненту), вторым параметром - объект, в котором мы указываем проблемные свойства
                 dispatch(action)  //{_error:'Email is wrong'} свойство _error - показывает общую ошибку для всей формы, значение - описание этой ошибки. Описание ошибки попадает в качестве пропсов в валидируемую форму. Т.е. props.error будет выводить описание полученной ошибки.
             }
@@ -60,7 +71,13 @@ export const logoutTC = () => dispatch => {
     loginAPI.logout()
         .then(data => {
             if (data.resultCode === 0) {
-                dispatch(setUserData(null, null, null, false))
+                dispatch(setUserData(null, null, null, false, null))
             }
         })
+}
+
+export const getCaptchaURLTC = () => async dispatch => {
+    const data = await loginAPI.getCaptchaURL();
+    const captchaURL = data.url;
+    dispatch(setCaptchaUrl(captchaURL))
 }
