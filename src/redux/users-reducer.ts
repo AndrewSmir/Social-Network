@@ -1,4 +1,5 @@
 import {usersAPI as userAPI} from "../api/api";
+import {UserType} from "../types/types";
 
 const CHANGE_FOLLOW = 'CHANGE_FOLLOW';
 const SET_USERS = 'SET_USERS'
@@ -9,17 +10,20 @@ const SET_NEXT_PAGE = 'SET_NEXT_PAGE'
 const TOGGLE_IS_FETCHING = 'TOGGLE_IS_FETCHING'
 const TOGGLE_IS_FOLLOWING = 'TOGGLE_IS_FOLLOWING'
 
+
+export type InitialStateType = typeof initialState
+
 const initialState = {
-    users: [],
+    users: [] as Array<UserType>,
     pageSize: 3, //Значения нужны для определения постраничного вывода.
-    totalUsersCount: null,
+    totalUsersCount: null as number | null,
     currentPage: 1,
     isFetching: false,
-    followingInProgress: []
+    followingInProgress: [] as Array<number> //array of users ids
 
 } // добавляем значение state по умолчанию, оно нужно для инициализации state при запуске приложения. Иначе state будет undefined и наш store не создастся
 
-const usersReducer = (state = initialState, action) => { //Reducer - функция, через которую идет модификация state
+const usersReducer = (state = initialState, action: any): InitialStateType => { //Reducer - функция, через которую идет модификация state
     switch (action.type) {
         case CHANGE_FOLLOW:
             return {
@@ -80,14 +84,54 @@ const usersReducer = (state = initialState, action) => { //Reducer - функц�
 export default usersReducer
 
 ///Action Creators///
-export const changeFollow = (userID) => ({type: CHANGE_FOLLOW, userID});
-export const setUsers = (users) => ({type: SET_USERS, users}); //Это AC будет формировать action по загрузке пользователей
-export const setCurrentPage = (currentPage) => ({type: SET_CURRENT_PAGE, currentPage})
-export const setTotalUsersCount = (totalUsersCount) => ({type: SET_TOTAL_USERS_COUNT, count: totalUsersCount});
-export const toggleIsFetching = () => ({type: TOGGLE_IS_FETCHING})
-export const setPreviousPage = () => ({type: SET_PREVIOUS_PAGE});
-export const setNextPage = () => ({type: SET_NEXT_PAGE});
-export const toggleFollowingProgress = (isFetching, userId) => {
+type ChangeFollowActionType = {
+    type: typeof CHANGE_FOLLOW
+    userID: number
+}
+export const changeFollow = (userID: number): ChangeFollowActionType => ({type: CHANGE_FOLLOW, userID});
+
+type SetUsersActionType = {
+    type: typeof SET_USERS
+    users: any
+}
+export const setUsers = (users: any): SetUsersActionType => ({type: SET_USERS, users}); //Это AC будет формировать action по загрузке пользователей
+
+type SetCurrentPageActionType = {
+    type: typeof SET_CURRENT_PAGE
+    currentPage: number
+}
+export const setCurrentPage = (currentPage: number): SetCurrentPageActionType => ({type: SET_CURRENT_PAGE, currentPage})
+
+type SetTotalUsersCountActionType = {
+    type: typeof SET_TOTAL_USERS_COUNT
+    count: number
+}
+export const setTotalUsersCount = (totalUsersCount: number): SetTotalUsersCountActionType => ({
+    type: SET_TOTAL_USERS_COUNT,
+    count: totalUsersCount
+});
+
+type ToggleIsFetchingActionType = {
+    type: typeof TOGGLE_IS_FETCHING
+}
+export const toggleIsFetching = (): ToggleIsFetchingActionType => ({type: TOGGLE_IS_FETCHING})
+
+type SetPreviousPageActionType = {
+    type: typeof SET_PREVIOUS_PAGE
+}
+export const setPreviousPage = (): SetPreviousPageActionType => ({type: SET_PREVIOUS_PAGE});
+
+type SetNextPageActionType = {
+    type: typeof SET_NEXT_PAGE
+}
+export const setNextPage = (): SetNextPageActionType => ({type: SET_NEXT_PAGE});
+
+type ToggleFollowingProgressActionType = {
+    type: typeof TOGGLE_IS_FOLLOWING
+    isFetching: boolean
+    userId: number
+}
+export const toggleFollowingProgress = (isFetching: boolean, userId: number): ToggleFollowingProgressActionType => {
     return {
         type: TOGGLE_IS_FOLLOWING, isFetching, userId
     }
@@ -95,8 +139,8 @@ export const toggleFollowingProgress = (isFetching, userId) => {
 
 ///Thunk///
 
-export const getUsersTC = (currentPage, pageSize) => {
-    return async (dispatch) => {
+export const getUsersTC = (currentPage: number, pageSize: number) => {
+    return async (dispatch: any) => {
         dispatch(toggleIsFetching())
         const response = await userAPI.getUsers(currentPage, pageSize)
         dispatch(toggleIsFetching())
@@ -106,7 +150,7 @@ export const getUsersTC = (currentPage, pageSize) => {
     }
 }
 
-export const followUserTC = (userId) => async (dispatch) => {
+export const followUserTC = (userId: number) => async (dispatch: any) => {
     dispatch(toggleFollowingProgress(true, userId))
     try {
         const data = await userAPI.followUser(userId)
@@ -120,13 +164,13 @@ export const followUserTC = (userId) => async (dispatch) => {
     }
 }
 
-export const unfollowUserTC = (userId) => {
-    return async (dispatch) => {
+export const unfollowUserTC = (userId: number) => {
+    return async (dispatch: any) => {
         dispatch(toggleFollowingProgress(true, userId))
         const data = await userAPI.unfollowUser(userId)
-                if (data.resultCode === 0) {
-                    dispatch(changeFollow(userId))
-                    dispatch(toggleFollowingProgress(false, userId))
-                }
+        if (data.resultCode === 0) {
+            dispatch(changeFollow(userId))
+            dispatch(toggleFollowingProgress(false, userId))
+        }
     }
 }

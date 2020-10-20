@@ -1,5 +1,18 @@
 const ADD_MESSAGE = 'ADD-MESSAGE';
 
+export type InitialStateType = typeof initialState
+
+type DialogsDataType = {
+    id: string
+    name: string
+    imgSrc: string
+}
+
+type MessagesDataType = {
+    id: string
+    message: string
+}
+
 const initialState = { // добавляем значение state по умолчанию, оно нужно для инициализации state при запуске приложения. Иначе state будет undefined и наш store не создастся. Детали есть в redux-store
     dialogsData: [
         {
@@ -14,19 +27,19 @@ const initialState = { // добавляем значение state по умо�
         },
         {id: "3", name: 'Михалыч', imgSrc: 'https://imgur.com/I80W1Q0.png'},
         {id: "4", name: 'Витек', imgSrc: 'https://image.freepik.com/free-vector/_9385-36.jpg'}
-    ],
+    ] as Array<DialogsDataType>,
 
     messagesData: [
         {id: "1", message: 'hi'},
         {id: "1", message: 'hi how are you'},
         {id: "1", message: 'I\'m fine'},
         {id: "1", message: 'Витек'}
-    ],
+    ] as Array<MessagesDataType>,
 }
 
 //Reducer - чистая функция, которая принимает state, action и возвращает новое состояние state. Если action.type не удовлетворяет условию, то возвращает переданный state
 
-const dialogsReducer = (state = initialState, action) => { //action - объект, у которого как минимум есть type
+const dialogsReducer = (state = initialState, action: any): InitialStateType => { //action - объект, у которого как минимум есть type
     switch (action.type) {
 
         case ADD_MESSAGE: {
@@ -46,7 +59,12 @@ const dialogsReducer = (state = initialState, action) => { //action - объек
 }
 
 export default dialogsReducer
-export const addMessageActionCreator = (newMessageText) => ({type: ADD_MESSAGE, newMessageText})
+
+type AddMessageActionCreatorType = {
+    type: typeof ADD_MESSAGE
+    newMessageText: string
+}
+export const addMessageActionCreator = (newMessageText: string): AddMessageActionCreatorType => ({type: ADD_MESSAGE, newMessageText})
 
 /*
 Зачем мы делаем копию state?

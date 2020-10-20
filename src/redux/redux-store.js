@@ -3,7 +3,7 @@ import dialogsReducer from "./dialogs-reducer";
 import profileReducer from "./profile-reducer";
 import sidebarReducer from "./sidebar-reducer";
 import usersReducer from "./users-reducer";
-import authReducer from "./auth-reducer";
+import authReducer from "./auth-reducer.ts";
 import thunk from "redux-thunk";
 import { reducer as formReducer } from 'redux-form'
 import {appReducer} from "./app-reducer";
@@ -43,7 +43,7 @@ store = {
     callSubscriber(){...} и д.р.
 
 }
-Проблем в том, что наши свойства (dialogsPage, profilePage и т.д.) не имеют начальных значений. Поэтому начальное значение мы должны указать в соответсвющих Resucer-ax
+Проблем в том, что наши свойства (dialogsPage, profilePage и т.д.) не имеют начальных значений. Поэтому начальное значение мы должны указать в соответсвющих Reducer-ax
 (для dialogPage указываем значение state в dialogReducer и т.д.).
 Что будет происходить? При вызове функции createStore наш Redux начинает отправлять всем reducer-am по порядку внутренние action-s.
 Т.к. action.type, который отправляет Redux не будет найден, то reducer вернет значение state, который мы указываем в качестве initial state у каждого reducer-a.
