@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {
     followUserTC, getUsersTC,
     setCurrentPage, setNextPage, setPreviousPage, unfollowUserTC
@@ -13,60 +13,49 @@ import {
     getIsFetching,
     getPageSize,
     getTotalUsersCount,
-    getUsers, getUserSupSel
+    getUsers
 } from "../../redux/user-selectors";
 
 
-class UsersContainer extends React.Component {
-    componentDidMount() {
-        this.props.getUsers(this.props.currentPage, this.props.pageSize)
+const UsersContainer = (props) => {
+
+    useEffect(()=>{
+        props.getUsers(props.currentPage, props.pageSize)
+    }, [])
+
+    const setPage = (pageNumber) => {
+        props.setCurrentPage(pageNumber)
+        props.getUsers(pageNumber, props.pageSize)
     }
 
-    /* - было до Thunk
-    componentDidMount() {
-        this.props.toggleIsFetching()
-        userAPI.getUsers(this.props.currentPage, this.props.pageSize)
-            .then(response => {
-                this.props.toggleIsFetching()
-                this.props.setUsers(response.items);
-                this.props.setTotalUsersCount(response.totalCount)
-            })
-    }
-     */
-
-    setPage = (pageNumber) => {
-        this.props.setCurrentPage(pageNumber)
-        this.props.getUsers(pageNumber, this.props.pageSize)
+    const setNextPage = () => {
+        props.setNextPage()
+        props.getUsers(props.currentPage + 1, props.pageSize)
     }
 
-    setNextPage = () => {
-        this.props.setNextPage()
-        this.props.getUsers(this.props.currentPage + 1, this.props.pageSize)
+    const setPreviousPage = () => {
+        props.setPreviousPage()
+        props.getUsers(props.currentPage - 1, props.pageSize)
     }
 
-    setPreviousPage = () => {
-        this.props.setPreviousPage()
-        this.props.getUsers(this.props.currentPage - 1, this.props.pageSize)
-    }
-
-    render() {
-        return <>
-            {this.props.isFetching ? <Preloader/> :
-                <Users totalUsersCount={this.props.totalUsersCount}
-                       pageSize={this.props.pageSize}
-                       setPage={this.setPage}
-                       usersPage={this.props.usersPage}
-                       currentPage={this.props.currentPage}
-                       setNextPage={this.setNextPage}
-                       setPreviousPage={this.setPreviousPage}
-                       followingInProgress={this.props.followingInProgress}
-                       followUser={this.props.followUser}
-                       unfollowUser={this.props.unfollowUser}
+    return (
+        <>
+            {props.isFetching ? <Preloader/> :
+                <Users totalUsersCount={props.totalUsersCount}
+                       pageSize={props.pageSize}
+                       setPage={setPage}
+                       usersPage={props.usersPage}
+                       currentPage={props.currentPage}
+                       setNextPage={setNextPage}
+                       setPreviousPage={setPreviousPage}
+                       followingInProgress={props.followingInProgress}
+                       followUser={props.followUser}
+                       unfollowUser={props.unfollowUser}
                 />}
         </>
-    }
-}
+    )
 
+}
 /*
 const mapStateToProps = (state) => { // connect (функция в самом низу) позволяет нам автоматически вытаскивать state из store. Т.е. он неявно вызывает store.getState() и возвращает нам актуальный state
     return {
