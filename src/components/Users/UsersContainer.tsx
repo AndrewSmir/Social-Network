@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {FC, useEffect} from "react";
 import {
     followUserTC, getUsersTC,
     setCurrentPage, setNextPage, setPreviousPage, unfollowUserTC
@@ -15,15 +15,32 @@ import {
     getTotalUsersCount,
     getUsers
 } from "../../redux/user-selectors";
+import {UserType} from "../../types/types";
 
 
-const UsersContainer = (props) => {
+type PropsType = {
+    currentPage: number
+    followingInProgress: Array<number>
+    isFetching: boolean
+    pageSize: number
+    totalUsersCount: number
+    usersPage: Array<UserType>
 
-    useEffect(()=>{
+    unfollowUser: (userId: number) => void
+    setCurrentPage: (currentPage: number) => void
+    setNextPage: () => void
+    setPreviousPage: () => void
+    getUsers: (currentPage: number, pageSize: number) => void
+    followUser: (userId: number) => void
+}
+
+const UsersContainer: FC<PropsType> = (props) => {
+
+    useEffect(() => {
         props.getUsers(props.currentPage, props.pageSize)
     }, [])
 
-    const setPage = (pageNumber) => {
+    const setPage = (pageNumber: number) => {
         props.setCurrentPage(pageNumber)
         props.getUsers(pageNumber, props.pageSize)
     }
@@ -54,8 +71,8 @@ const UsersContainer = (props) => {
                 />}
         </>
     )
-
 }
+
 /*
 const mapStateToProps = (state) => { // connect (функция в самом низу) позволяет нам автоматически вытаскивать state из store. Т.е. он неявно вызывает store.getState() и возвращает нам актуальный state
     return {
@@ -69,7 +86,7 @@ const mapStateToProps = (state) => { // connect (функция в самом н
 };
  */
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: any) => {
     return {
         usersPage: getUsers(state),
         pageSize: getPageSize(state),
@@ -78,12 +95,12 @@ const mapStateToProps = (state) => {
         isFetching: getIsFetching(state),
         followingInProgress: getFollowingInProgress(state)
     }
-};
+}
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
 
-        setCurrentPage: (currentPage) => {
+        setCurrentPage: (currentPage: number) => {
             dispatch(setCurrentPage(currentPage))
         },
         setNextPage: () => {
@@ -93,15 +110,15 @@ const mapDispatchToProps = dispatch => {
             dispatch(setPreviousPage())
         },
 
-        getUsers: (currentPage, pageSize) => {
+        getUsers: (currentPage: number, pageSize: number) => {
             dispatch(getUsersTC(currentPage, pageSize))
         },
 
-        followUser: (userId) => {
+        followUser: (userId: number) => {
             dispatch(followUserTC(userId))
         },
 
-        unfollowUser: (userId) => {
+        unfollowUser: (userId: number) => {
             dispatch(unfollowUserTC(userId))
         }
     }
@@ -109,7 +126,7 @@ const mapDispatchToProps = dispatch => {
 
 export default compose(
     connect(mapStateToProps, mapDispatchToProps),
-    )(UsersContainer)
+)(UsersContainer)
 
 /*
 //mapDispatchToProps мы можем заменить объектом и connect сам создаст функции обертки, куда будут заложены наши action-creator-ы
